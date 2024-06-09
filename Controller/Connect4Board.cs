@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SODV1202_Connect4.Classes;
 
 namespace SODV1202_Connect4.Controller
 {
@@ -20,36 +16,123 @@ namespace SODV1202_Connect4.Controller
          * 
          * method to start game (must have 2 players, unless we add AI)
          */
-        char[,] Board { get; set; }
+        Board Board { get; set; }
+        private List<Player> _playerList { get; set; } = new List<Player>();
+        private readonly int MaxAllowedPlayers = 3;
+        private readonly int MinAllowedPlayers = 2;
 
-        public Connect4Board()
+
+
+        public void ShowMainMenu()
         {
-            Board = new char[6, 7];
+            int optionSelected;
+            do
+            {
+                MainMenu();
+                optionSelected = Convert.ToInt16(Console.ReadLine());
+                SelectedOption(optionSelected);
+            } while (optionSelected != 0);
+        }
+        private void MainMenu()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("------------- MENU -------------");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("1. Add player");
+            Console.WriteLine("2. Remove player");
+            Console.WriteLine("3. Show players");
+            Console.WriteLine("4. Create board");
+            Console.WriteLine("0. Exit");
+            Console.WriteLine("--------------------------------");
+            Console.Write("Select an option: ");
         }
 
-        public void ResetBoard()
+        private void SelectedOption(int option)
         {
-            Board = new char[6, 7];
-            for (int i = 0; i < Board.GetLength(0); i++)
+            switch (option)
             {
-                for (int j = 0; j < Board.GetLength(1); j++)
-                {
-                    Board[i, j] = '#';
-                }
+                case 1:
+                    AddPlayer();
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    ShowPlayers();
+                    break;
+                case 4:
+                    CreateBoardMenu();
+                    break;
+                case 0:
+                    Console.WriteLine("Good bye!. Thank you for play our game.");
+                    Console.WriteLine("Copyright 2024. KaSa Studio. All rights reserved.");
+                    break;
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid option!!!!");
+                    break;
             }
         }
 
-        public void DisplayBoard()
+        #region Player
+        private void AddPlayer()
         {
-            for (int i = 0; i < Board.GetLength(0); i++)
+            if (_playerList.Count < MaxAllowedPlayers)
             {
-                for (int j = 0; j < Board.GetLength(1); j++)
-                {
-                    Console.Write($"{Board[i, j],2} ");
-                }
-                Console.WriteLine();
+                Console.WriteLine("User name (Name and Lastname):");//TODO validate non duplicated username
+                string userName = Console.ReadLine();
+                Console.WriteLine("Player name (Surname without blank spaces):");//TODO validate non duplicated playername
+                string playerName = Console.ReadLine().Replace(" ", string.Empty).Trim();
+                Console.WriteLine("Symbol (Only one letter):");
+                char symbol;
+                char.TryParse(Console.ReadLine(), out symbol);//TODO validate non duplicated symbol or at least with the same color
+                //Console.WriteLine("Select a color:");//TODO implement color selection
+                Player player = new Player(userName, playerName);
+                player.Symbol = symbol;
+                player.PlayerColor = ConsoleColor.White;//Default color
+                _playerList.Add(player);
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Only can be {MaxAllowedPlayers} players");
             }
         }
+
+        private void DeletePlayer() { }
+
+        private void ShowPlayers()
+        {
+            Console.WriteLine("Player list:");
+            foreach (Player player in _playerList)
+            {
+                Console.ForegroundColor = player.PlayerColor;
+                string humanPlayer = player.IsAIUser() ? "AI" : "Human";
+                Console.WriteLine($"{player.ToString()} ({humanPlayer})");
+            }
+        }
+
+
+        #endregion
+        private void CreateBoardMenu()
+        {
+            if (_playerList.Count >= MinAllowedPlayers)
+            {
+                //TODO the columns, rows, sequenceToWin can be configured in the future to make a more dynamic game
+                CreateBoard(7, 6, 4, _playerList.Count);
+            }
+            else
+            {
+                Console.WriteLine($"You need at least {MinAllowedPlayers} players to init a new game");
+            }
+        }
+
+        private void CreateBoard(int columns, int rows, int sequenceToWin, int maxPlayers)
+        {
+            Board = new Board(columns, rows, sequenceToWin, maxPlayers);
+            Board.ResetBoard();
+            Board.DisplayBoard();
+        }
+
         /* 
          * method with a while loop for a game in progress and switch with cases for each column when a number is chosen
          */

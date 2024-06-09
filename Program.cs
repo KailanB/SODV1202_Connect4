@@ -3,5 +3,5 @@
 Console.WriteLine("Hello Team!");
 
 Connect4Board board = new Connect4Board();
-board.ResetBoard();
-board.DisplayBoard();
+board.ShowMainMenu();
+

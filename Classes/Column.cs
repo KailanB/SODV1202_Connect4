@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SODV1202_Connect4.Classes
+﻿namespace SODV1202_Connect4.Classes
 {
-    class Columns
+    class Column
     {
 
         // counter field get, private set.
