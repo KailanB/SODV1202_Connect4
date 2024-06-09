@@ -85,10 +85,10 @@ namespace SODV1202_Connect4.Controller
                 Console.WriteLine("Symbol (Only one letter):");
                 char symbol;
                 char.TryParse(Console.ReadLine(), out symbol);//TODO validate non duplicated symbol or at least with the same color
-                //Console.WriteLine("Select a color:");//TODO implement color selection
+                ColorList();
                 Player player = new Player(userName, playerName);
                 player.Symbol = symbol;
-                player.PlayerColor = ConsoleColor.White;//Default color
+                player.PlayerColor = SelectColor();//Default color is white
                 _playerList.Add(player);
             }
             else
@@ -133,6 +133,55 @@ namespace SODV1202_Connect4.Controller
             Board.DisplayBoard();
         }
 
+        private void ColorList()
+        {
+
+            Console.WriteLine("Select color: ");
+            Console.WriteLine("0. White ");
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine("1. Dark Blue ");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("2. Dark Green ");
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            Console.WriteLine("3. Dark Blue-Green ");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("4. Dark Red ");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("5. Dark Magenta ");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("6. Dark Yellow ");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("7. Blue ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("8. Green ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("9. Red ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("10. Magenta ");
+        }
+
+        private System.ConsoleColor SelectColor()
+        {
+            int color = int.Parse(Console.ReadLine());
+
+            switch (color)
+            {
+                case 0: return ConsoleColor.White;
+                case 1: return ConsoleColor.DarkBlue;
+                case 2: return ConsoleColor.DarkGreen;
+                case 3: return ConsoleColor.DarkCyan;
+                case 4: return ConsoleColor.DarkRed;
+                case 5: return ConsoleColor.DarkMagenta;
+                case 6: return ConsoleColor.DarkYellow;
+                case 7: return ConsoleColor.Blue;
+                case 8: return ConsoleColor.Green;
+                case 9: return ConsoleColor.Red;
+                case 10: return ConsoleColor.Magenta;
+                default:
+                    Console.WriteLine("Option is not valid. The color assigned for default is white.");
+                    return ConsoleColor.White;
+            }
+        }
         /* 
          * method with a while loop for a game in progress and switch with cases for each column when a number is chosen
          */
