@@ -41,7 +41,17 @@
             Console.WriteLine("Board");
             for (int i = 0; i < Columns; i++)
             {
-                for (int j = 0; j < Rows; j++)
+                Console.Write($"{i,2} ");
+            }
+            Console.WriteLine();
+            for (int i = 0; i < Columns; i++)
+            {
+                Console.Write($"---");
+            }
+            Console.WriteLine();
+            for (int j = 0; j < Rows; j++)
+            {
+                for (int i = 0; i < Columns; i++)
                 {
                     Console.ForegroundColor = Layer[i, j].PlayerColor;
                     Console.Write($"{Layer[i, j].Symbol,2} ");
@@ -49,6 +59,28 @@
                 Console.WriteLine();
             }
             Console.WriteLine("-----------------------------------------------");
+        }
+
+        public void SelectColumnToPlay(Player player)
+        {
+            int column;
+            bool validPosition = false;
+            do
+            {
+                Console.ForegroundColor = player.PlayerColor;
+                Console.WriteLine($"Player: {player.PlayerName} ({player.Symbol}) choose a column to play");
+                Console.ForegroundColor = ConsoleColor.White;
+                column = Convert.ToInt16(Console.ReadLine());
+                for (int i = Rows - 1; i >= 0; i--)
+                {
+                    if (Layer[column, i].Symbol == '#')
+                    {
+                        Layer[column, i] = player;
+                        validPosition = true;
+                        break;
+                    }
+                }
+            } while (column > Columns || !validPosition);
         }
     }
 }

@@ -20,8 +20,26 @@ namespace SODV1202_Connect4.Controller
         private List<Player> _playerList { get; set; } = new List<Player>();
         private readonly int MaxAllowedPlayers = 3;
         private readonly int MinAllowedPlayers = 2;
+        private int CurrentPlayer = 0;
+        private bool EndGame = false;
 
-
+        public Connect4Board() //This constructor is only for testing purposes. At the end, it will be deleted.
+        {
+            //TEST Data
+            Player player1 = new Player("Sandra Vera", "player1")
+            {
+                PlayerColor = ConsoleColor.DarkBlue,
+                Symbol = '*'
+            };
+            _playerList.Add(player1);
+            Player player2 = new Player("Kailan Bates", "player2")
+            {
+                PlayerColor = ConsoleColor.DarkYellow,
+                Symbol = '&'
+            };
+            _playerList.Add(player2);
+            CreateBoard(7, 6, 4, _playerList.Count);
+        }
 
         public void ShowMainMenu()
         {
@@ -42,6 +60,7 @@ namespace SODV1202_Connect4.Controller
             Console.WriteLine("2. Remove player");
             Console.WriteLine("3. Show players");
             Console.WriteLine("4. Create board");
+            Console.WriteLine("5. Play Game");
             Console.WriteLine("0. Exit");
             Console.WriteLine("--------------------------------");
             Console.Write("Select an option: ");
@@ -61,6 +80,9 @@ namespace SODV1202_Connect4.Controller
                     break;
                 case 4:
                     CreateBoardMenu();
+                    break;
+                case 5:
+                    PlayGame();
                     break;
                 case 0:
                     Console.WriteLine("Good bye!. Thank you for play our game.");
@@ -82,7 +104,7 @@ namespace SODV1202_Connect4.Controller
                 string userName = Console.ReadLine();
                 Console.WriteLine("Player name (Surname without blank spaces):");//TODO validate non duplicated playername
                 string playerName = Console.ReadLine().Replace(" ", string.Empty).Trim();
-                Console.WriteLine("Symbol (Only one letter):");
+                Console.WriteLine("Symbol (Only one):");
                 char symbol;
                 char.TryParse(Console.ReadLine(), out symbol);//TODO validate non duplicated symbol or at least with the same color
                 ColorList();
@@ -133,6 +155,7 @@ namespace SODV1202_Connect4.Controller
             Board.DisplayBoard();
         }
 
+        #region Color
         private void ColorList()
         {
 
@@ -181,6 +204,40 @@ namespace SODV1202_Connect4.Controller
                     Console.WriteLine("Option is not valid. The color assigned for default is white.");
                     return ConsoleColor.White;
             }
+        }
+        #endregion
+
+        private void PlayGame()
+        {
+            if (_playerList.Count >= MinAllowedPlayers && Board != null)
+            {
+                do
+                {
+                    Console.Clear();
+                    Board.DisplayBoard();
+                    Player currentPlayer = _playerList[CurrentPlayer];
+                    Board.SelectColumnToPlay(currentPlayer);
+                    if (CurrentPlayer >= Board.MaxPlayers - 1)
+                    {
+                        CurrentPlayer = 0;
+                    }
+                    else
+                    {
+                        CurrentPlayer++;
+                    }
+                    Board.DisplayBoard();
+                    ValidateWinner();
+                } while (!EndGame);
+            }
+            else
+            {
+                Console.WriteLine("You must configure the players and create the board first!");
+            }
+        }
+
+        private void ValidateWinner()
+        {
+            //Implement the victory condition and change EndGame to true when a player win
         }
         /* 
          * method with a while loop for a game in progress and switch with cases for each column when a number is chosen
