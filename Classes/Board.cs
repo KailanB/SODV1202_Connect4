@@ -1,4 +1,6 @@
-﻿namespace SODV1202_Connect4.Classes
+﻿using System.Data.Common;
+
+namespace SODV1202_Connect4.Classes
 {
     class Board
     {
@@ -21,14 +23,14 @@
             Rows = rows;
             SequenceToWin = sequenceToWin;
             MaxPlayers = maxPlayers;
-            Layer = new Player[columns, rows];
+            Layer = new Player[rows, columns]; // this was declared backwards, rows are the first value and columns second in a multidimensional array
         }
         public void ResetBoard()
         {
-            Layer = new Player[Columns, Rows];
-            for (int i = 0; i < Columns; i++)
+            Layer = new Player[Rows, Columns];
+            for (int i = 0; i < Rows; i++)
             {
-                for (int j = 0; j < Rows; j++)
+                for (int j = 0; j < Columns; j++)
                 {
                     Layer[i, j] = DefaultPlayer;
                 }
@@ -41,7 +43,7 @@
             Console.WriteLine("Board");
             for (int i = 0; i < Columns; i++)
             {
-                Console.Write($"{i,2} ");
+                Console.Write($"{i+1,2} "); // added i+1 to make board more user friendly. Column 0 is displayed as 1
             }
             Console.WriteLine();
             for (int i = 0; i < Columns; i++)
@@ -49,10 +51,11 @@
                 Console.Write($"---");
             }
             Console.WriteLine();
-            for (int j = 0; j < Rows; j++)
+            for (int i = 0; i < Rows; i++) // changed the j's to i's here since it was causing the display method to be inverted
             {
-                for (int i = 0; i < Columns; i++)
+                for (int j = 0; j < Columns; j++) // array rows and columns were declared the other way around "Layer = new Player[columns, rows];" so swapped those for the time being 
                 {
+                                 //Console.Write($"{i}{j}  ");
                     Console.ForegroundColor = Layer[i, j].PlayerColor;
                     Console.Write($"{Layer[i, j].Symbol,2} ");
                 }
@@ -71,16 +74,76 @@
                 Console.WriteLine($"Player: {player.PlayerName} ({player.Symbol}) choose a column to play");
                 Console.ForegroundColor = ConsoleColor.White;
                 column = Convert.ToInt16(Console.ReadLine());
-                for (int i = Rows - 1; i >= 0; i--)
+                if(column <= Columns & (column > 0)) // correct column validation
                 {
-                    if (Layer[column, i].Symbol == '#')
+                    for (int i = Rows - 1; i >= 0; i--)
                     {
-                        Layer[column, i] = player;
-                        validPosition = true;
-                        break;
+                        if (Layer[i, column-1].Symbol == '#') // changed the order of i / column to reflect standard Rows / Columns layout
+                        {
+                            Layer[i, column-1] = player; // changed to column -1 to adjust for user input being 1 to 7 now instead of 0 to 6 
+                            validPosition = true;
+                            break;
+                        }
                     }
                 }
+                else Console.WriteLine("Invalid column");
+
             } while (column > Columns || !validPosition);
         }
+
+        public bool ValidateWinner() // tested most of the validates. Further testing may be necessary 
+        {
+            for (int i = 0; i < Rows; i++) // validate winner for vertical (column) wins
+            {
+                for (int j = 0; j < Columns-3; j++) 
+                {
+                    if (((Layer[i, j].Symbol == Layer[i, j+1].Symbol) & (Layer[i, j+1].Symbol == Layer[i, j+2].Symbol) & (Layer[i, j+2].Symbol == Layer[i, j+3].Symbol)) & Layer[i, j].Symbol != '#')
+                    {
+                        return true;
+                        // we can incorporate a SequenceToWin value method later
+                    }
+                    
+                }
+            }
+            
+            for (int i = 0; i < Rows-3; i++) // validate winner for horizontal (rows) wins
+            {
+                for(int j = 0; j < Columns; j++)
+                {
+                    if (((Layer[i, j].Symbol == Layer[i + 1, j].Symbol) & (Layer[i + 1, j].Symbol == Layer[i + 2, j].Symbol) & (Layer[i + 2, j].Symbol == Layer[i + 3, j].Symbol)) & Layer[i, j].Symbol != '#')
+                    {
+                        return true;
+                    }
+                    
+                }
+            }
+            for (int i = 0; i < Rows-3; i++) // check diagonals for win
+            {
+                for (int j = 0; j < Columns-3; j++)
+                {
+                    if (((Layer[i, j].Symbol == Layer[i+1, j+1].Symbol) & (Layer[i+1, j+1].Symbol == Layer[i+2, j+2].Symbol) & (Layer[i+2, j+2].Symbol == Layer[i+3, j+3].Symbol)) & Layer[i, j].Symbol != '#')
+                    {
+                        return true;
+                    }
+                    if (((Layer[i, j+3].Symbol == Layer[i+1, j+2].Symbol) & (Layer[i+2, j+1].Symbol == Layer[i+2, j+1].Symbol) & (Layer[i+2, j+1].Symbol == Layer[i+3, j].Symbol)) & Layer[i, j+3].Symbol != '#')
+                    {
+                        return true;
+                    }
+                }
+            }
+            
+            return false;
+
+
+        }
+    
+    
+    
+    
+    
+    
+    
+    
     }
+
 }

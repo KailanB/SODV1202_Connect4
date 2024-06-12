@@ -1,4 +1,5 @@
 ﻿using SODV1202_Connect4.Classes;
+using System.Reflection;
 
 namespace SODV1202_Connect4.Controller
 {
@@ -66,6 +67,8 @@ namespace SODV1202_Connect4.Controller
             Console.Write("Select an option: ");
         }
 
+
+
         private void SelectedOption(int option)
         {
             switch (option)
@@ -82,6 +85,7 @@ namespace SODV1202_Connect4.Controller
                     CreateBoardMenu();
                     break;
                 case 5:
+                    Board.ResetBoard();
                     PlayGame();
                     break;
                 case 0:
@@ -152,7 +156,7 @@ namespace SODV1202_Connect4.Controller
         {
             Board = new Board(columns, rows, sequenceToWin, maxPlayers);
             Board.ResetBoard();
-            Board.DisplayBoard();
+            // Board.DisplayBoard(); removed display board before game begins. 
         }
 
         #region Color
@@ -225,9 +229,17 @@ namespace SODV1202_Connect4.Controller
                     {
                         CurrentPlayer++;
                     }
+                    Console.Clear(); // added another clear that way multiple boards are not displayed
                     Board.DisplayBoard();
-                    ValidateWinner();
+                    if (Board.ValidateWinner()) EndGame = true; // check for winner and EndGame true to break loop
+                    {
+                        Console.WriteLine($"Game Over! {currentPlayer.UserName} wins!");
+                        currentPlayer.PlayerWins(); // increase players score
+                    }
+
+                    
                 } while (!EndGame);
+                EndGame = false; // switch to false again so that game can be played again
             }
             else
             {
@@ -235,16 +247,13 @@ namespace SODV1202_Connect4.Controller
             }
         }
 
+
+        /* Directly using Board.ValidateWinner and putting validate method check within board object
         private void ValidateWinner()
         {
             //Implement the victory condition and change EndGame to true when a player win
         }
-        /* 
-         * method with a while loop for a game in progress and switch with cases for each column when a number is chosen
-         */
-
-        /* Method to quit a game early and reset, possibly just type reset?
-         */
+        */
 
         /* Methods to check for a game win
          * horizontal
