@@ -1,4 +1,7 @@
-﻿namespace SODV1202_Connect4.Classes
+﻿
+
+
+namespace SODV1202_Connect4.Classes
 {
     class User
     {

@@ -27,6 +27,7 @@ namespace SODV1202_Connect4.Controller
         public Connect4Board() //This constructor is only for testing purposes. At the end, it will be deleted.
         {
             //TEST Data
+            
             Player player1 = new Player("Sandra Vera", "player1")
             {
                 PlayerColor = ConsoleColor.DarkBlue,
@@ -255,10 +256,5 @@ namespace SODV1202_Connect4.Controller
         }
         */
 
-        /* Methods to check for a game win
-         * horizontal
-         * vertical and 
-         * diagonal 
-         */
     }
 }

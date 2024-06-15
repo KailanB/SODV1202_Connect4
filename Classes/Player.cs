@@ -24,6 +24,7 @@
         {
             Wins++;
         }
+        
 
         public string ToString() { return $"{base.UserName} ({PlayerName}) - {Symbol}"; }
 
