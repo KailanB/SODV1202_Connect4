@@ -11,7 +11,7 @@ class NEWProgram
     {
         GameManager gameManager = new GameManager();
         
-        Console.WriteLine("Hello Team!");
+        Console.WriteLine("Welcome!");
 
         Games connect4Game = new Connect4Game("Connect 4");
         gameManager.GamesList.Add(connect4Game);
@@ -81,7 +81,7 @@ class NEWProgram
                         Console.WriteLine("0. Exit");
                         Console.Write("Select an option: ");
                         optionSelected = Convert.ToInt16(Console.ReadLine());
-                        if ((optionSelected < gameManager.GamesList.Count) & optionSelected != 0)
+                        if ((optionSelected <= gameManager.GamesList.Count) && optionSelected != 0)
                         {
                             if (currentPlayerList.Count > gameManager.GamesList[optionSelected - 1].MaxPlayers) // check for valid number of players. There's probably a better way to do this but I am getting tired for today XD
                             {

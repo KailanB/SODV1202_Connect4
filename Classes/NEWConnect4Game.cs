@@ -1,4 +1,6 @@
-﻿namespace SODV1202_Connect4.Classes
+﻿using System.Data.Common;
+
+namespace SODV1202_Connect4.Classes
 {
     class Connect4Game : Games
     {
@@ -64,7 +66,7 @@
                 Console.WriteLine($"Player: {player.PlayerName} ({player.PlayerSymbol}) choose a column to play");
                 Console.ForegroundColor = ConsoleColor.White;
                 column = Convert.ToInt16(Console.ReadLine());
-                if (column <= Columns & (column > 0)) // correct column validation
+                if (column <= Columns && (column > 0)) // correct column validation
                 {
                     for (int i = Rows - 1; i >= 0; i--) // start from the bottom of the board checking for a valid row to play in
                     {
@@ -83,9 +85,9 @@
 
         public override void ResetGame()
         {
-            for (int i = 0; i < Rows ; i++)
+            for (int i = 0; i < Rows; i++)
             {
-                for (int j = 0; j < Columns ; j++)
+                for (int j = 0; j < Columns; j++)
                 {
                     Connect4Board[i, j] = '#';
                 }
@@ -111,7 +113,7 @@
                 {
                     if (Connect4Board[i, j] != '#') // check that the current symbol is not default
                     {
-                        foreach (PlayerSuper p in playerList) 
+                        foreach (PlayerSuper p in playerList)
                         {
                             if (Connect4Board[i, j] == p.PlayerSymbol)//if not default find player with matching symbol
                             {
@@ -125,7 +127,7 @@
                     {
                         Console.Write($"{Connect4Board[i, j],2} ");
                     }
-                       
+
                 }
                 Console.WriteLine();
             }
@@ -141,9 +143,9 @@
             {
                 for (int j = 0; j < Columns - 3; j++)
                 {
-                    if (((Connect4Board[i, j] == Connect4Board[i, j + 1]) & (Connect4Board[i, j + 1] == Connect4Board[i, j + 2]) & (Connect4Board[i, j + 2] == Connect4Board[i, j + 3])) & Connect4Board[i, j] != '#')
+                    if (((Connect4Board[i, j] == Connect4Board[i, j + 1]) && (Connect4Board[i, j + 1] == Connect4Board[i, j + 2]) && (Connect4Board[i, j + 2] == Connect4Board[i, j + 3])) && Connect4Board[i, j] != '#')
                     {
-                        Console.WriteLine("test vetical");
+                        Console.WriteLine("test vertical");
                         return true;
                         // we can incorporate a SequenceToWin value method later
                     }
@@ -155,7 +157,7 @@
             {
                 for (int j = 0; j < Columns; j++)
                 {
-                    if (((Connect4Board[i, j] == Connect4Board[i + 1, j]) & (Connect4Board[i + 1, j] == Connect4Board[i + 2, j]) & (Connect4Board[i + 2, j] == Connect4Board[i + 3, j])) & Connect4Board[i, j] != '#')
+                    if (((Connect4Board[i, j] == Connect4Board[i + 1, j]) && (Connect4Board[i + 1, j] == Connect4Board[i + 2, j]) && (Connect4Board[i + 2, j] == Connect4Board[i + 3, j])) && Connect4Board[i, j] != '#')
                     {
                         Console.WriteLine("test horizontal");
                         return true;
@@ -163,15 +165,28 @@
 
                 }
             }
-            for (int i = 0; i < Rows - 3; i++) // check diagonals for win
+            /*for (int i = 0; i < Rows - 3; i++) // check diagonals for win
             {
                 for (int j = 0; j < Columns - 3; j++)
                 {
-                    if (((Connect4Board[i, j] == Connect4Board[i + 1, j + 1]) & (Connect4Board[i + 1, j + 1] == Connect4Board[i + 2, j + 2]) & (Connect4Board[i + 2, j + 2] == Connect4Board[i + 3, j + 3])) & Connect4Board[i, j] != '#')
+                    if (((Connect4Board[i, j] == Connect4Board[i + 1, j + 1]) && (Connect4Board[i + 1, j + 1] == Connect4Board[i + 2, j + 2]) && (Connect4Board[i + 2, j + 2] == Connect4Board[i + 3, j + 3])) && Connect4Board[i, j] != '#')
                     {
                         return true;
                     }
-                    if (((Connect4Board[i, j + 3] == Connect4Board[i + 1, j + 2]) & (Connect4Board[i + 2, j + 1] == Connect4Board[i + 2, j + 1]) & (Connect4Board[i + 2, j + 1] == Connect4Board[i + 3, j])) & Connect4Board[i, j + 3] != '#')
+                    if (((Connect4Board[i, j + 3] == Connect4Board[i + 1, j + 2]) && (Connect4Board[i + 1, j + 2] == Connect4Board[i + 2, j + 1]) && (Connect4Board[i + 2, j + 1] == Connect4Board[i + 3, j])) && Connect4Board[i + 3, j] != '#')
+                    {
+                        return true;
+                    }
+                }
+            }*/
+
+            //check diagonals for win using recursion
+            //This block of code do the same of the previous block of code, that validate the diagonals
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Columns; j++)
+                {
+                    if (Connect4Board[i, j] != '#' && (CheckDiagonal(i, j, 0) || CheckDiagonalInv(i, j, 0)))
                     {
                         return true;
                     }
@@ -181,7 +196,55 @@
             return false;
         }
 
+        readonly int ConnectForWin = 4; //This value should be dynamic to change the total of continous cells to win
 
+        /// <summary>
+        /// Recursive method to validate the inverted diagonal
+        /// </summary>
+        /// <param name="row">Current row</param>
+        /// <param name="column">Current column</param>
+        /// <param name="ConnectedCell">Consecutive connected cells</param>
+        /// <returns></returns>
+        private bool CheckDiagonalInv(int row, int column, int ConnectedCell)
+        {
+            if (ConnectedCell == ConnectForWin - 1)
+            {
+                return true;
+            }
+            else if (row == Rows - 1 || column == 0 || Connect4Board[row, column] != Connect4Board[row + 1, column - 1] || Connect4Board[row, column] == '#')
+            {
+                return false;
+            }
+            else
+            {
+                ConnectedCell++;
+                return CheckDiagonalInv(row + 1, column - 1, ConnectedCell);
+            }
+        }
 
+        /// <summary>
+        /// Recursive method to validate the diagonal
+        /// </summary>
+        /// <param name="row">Current row</param>
+        /// <param name="column">Current column</param>
+        /// <param name="ConnectedCell">Consecutive connected cells</param>
+        /// <returns></returns>
+        private bool CheckDiagonal(int row, int column, int ConnectedCell)
+        {
+            if (ConnectedCell == ConnectForWin - 1)
+            {
+                return true;
+            }
+            else if (row == Rows - 1 || column == Columns - 1 || Connect4Board[row, column] != Connect4Board[row + 1, column + 1] || Connect4Board[row, column] == '#')
+            {
+                return false;
+            }
+            else
+            {
+                ConnectedCell++;
+                return CheckDiagonal(row + 1, column + 1, ConnectedCell);
+            }
+
+        }
     }
 }
