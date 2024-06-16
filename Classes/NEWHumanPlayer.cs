@@ -23,5 +23,8 @@ namespace SODV1202_Connect4.Classes
 
         public override string ToString() { return $"{PlayerName} - {PlayerSymbol}"; }
 
+
     }
+
+    
 }

@@ -145,7 +145,7 @@ namespace SODV1202_Connect4.Classes
                 {
                     if (((Connect4Board[i, j] == Connect4Board[i, j + 1]) && (Connect4Board[i, j + 1] == Connect4Board[i, j + 2]) && (Connect4Board[i, j + 2] == Connect4Board[i, j + 3])) && Connect4Board[i, j] != '#')
                     {
-                        Console.WriteLine("test vertical");
+                        Console.WriteLine("test horizontal");
                         return true;
                         // we can incorporate a SequenceToWin value method later
                     }
@@ -159,27 +159,31 @@ namespace SODV1202_Connect4.Classes
                 {
                     if (((Connect4Board[i, j] == Connect4Board[i + 1, j]) && (Connect4Board[i + 1, j] == Connect4Board[i + 2, j]) && (Connect4Board[i + 2, j] == Connect4Board[i + 3, j])) && Connect4Board[i, j] != '#')
                     {
-                        Console.WriteLine("test horizontal");
+                        Console.WriteLine("test vertical");
                         return true;
                     }
 
                 }
             }
-            /*for (int i = 0; i < Rows - 3; i++) // check diagonals for win
+            /*
+            for (int i = 0; i < Rows - 3; i++) // check diagonals for win
             {
                 for (int j = 0; j < Columns - 3; j++)
                 {
                     if (((Connect4Board[i, j] == Connect4Board[i + 1, j + 1]) && (Connect4Board[i + 1, j + 1] == Connect4Board[i + 2, j + 2]) && (Connect4Board[i + 2, j + 2] == Connect4Board[i + 3, j + 3])) && Connect4Board[i, j] != '#')
                     {
+                        Console.WriteLine("test diagonal top down right");
                         return true;
                     }
                     if (((Connect4Board[i, j + 3] == Connect4Board[i + 1, j + 2]) && (Connect4Board[i + 1, j + 2] == Connect4Board[i + 2, j + 1]) && (Connect4Board[i + 2, j + 1] == Connect4Board[i + 3, j])) && Connect4Board[i + 3, j] != '#')
                     {
+                        Console.WriteLine("test diagonal top down left");
                         return true;
                     }
                 }
-            }*/
-
+            }
+            */
+            
             //check diagonals for win using recursion
             //This block of code do the same of the previous block of code, that validate the diagonals
             for (int i = 0; i < Rows; i++)
@@ -192,6 +196,7 @@ namespace SODV1202_Connect4.Classes
                     }
                 }
             }
+            
 
             return false;
         }
