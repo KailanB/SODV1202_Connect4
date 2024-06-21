@@ -1,11 +1,8 @@
 ﻿using SODV1202_Connect4.Classes;
-using SODV1202_Connect4.Controller;
-using System.Buffers;
-using System.ComponentModel.Design;
+using SODV1202_Connect4.Classes.AI;
 
-
-
-class NEWProgram
+namespace SODV1202_Connect4;
+class Program
 {
     static void Main()
     {
@@ -15,23 +12,17 @@ class NEWProgram
 
         Games connect4Game = new Connect4Game("Connect 4");
         gameManager.GamesList.Add(connect4Game);
-        List<PlayerSuper> currentPlayerList = new List<PlayerSuper>();
+        List<Player> currentPlayerList = new List<Player>();
 
-        PlayerSuper player1 = new HumanPlayer("Sandra Vera", '*', ConsoleColor.DarkBlue);
+        Player player1 = new HumanPlayer("Sandra Vera", '*', ConsoleColor.DarkBlue);
         currentPlayerList.Add(player1);
-        PlayerSuper player2 = new HumanPlayer("Kailan", '&', ConsoleColor.DarkYellow);
+        Player player2 = new HumanPlayer("Kailan", '&', ConsoleColor.DarkYellow);
         currentPlayerList.Add(player2);
+        Player player3 = new AIPlayer("Easy Peasy", 'X', ConsoleColor.DarkRed, new AIEasy());
 
         gameManager.PlayerList.Add(player1);
         gameManager.PlayerList.Add(player2);
-
-        //connect4Game.ResetGame();
-        //connect4Game.DisplayGame(currentPlayerList);
-
-
-
-        //connect4Game.Play(currentPlayerList);
-
+        gameManager.PlayerList.Add(player3);
 
         string optionSelected; // changed to string so that we can run input validation
         int selectionToInt;
@@ -69,8 +60,6 @@ class NEWProgram
                             int count = 0; // counter to make sure we are displaying at least one player. If not output message no players available
                             for (int i = 0; i < gameManager.PlayerList.Count; i++)
                             {
-                                //if (PlayerList.Find(player => player.PlayerName == playerName) != null)
-
                                 if (currentPlayerList.Find(player => player.PlayerName == gameManager.PlayerList[i].PlayerName) == null)
                                 {
                                     Console.WriteLine($"{i + 1}. {gameManager.PlayerList[i]}");
@@ -84,7 +73,7 @@ class NEWProgram
                             optionSelected = Console.ReadLine();
                             if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
                             {
-                                if ((selectionToInt <= gameManager.PlayerList.Count) && selectionToInt != 0)
+                                if ((selectionToInt <= gameManager.PlayerList.Count) && selectionToInt != 0 && !currentPlayerList.Exists(p => p.PlayerName == gameManager.PlayerList[selectionToInt - 1].PlayerName)) //Prevent the same player being added multiple times
                                 {
                                     Console.WriteLine($"{gameManager.PlayerList[selectionToInt - 1]} added to currently playing.");
                                     currentPlayerList.Add(gameManager.PlayerList[selectionToInt - 1]);
@@ -99,7 +88,7 @@ class NEWProgram
                             else
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Please select a valid number from 0 to {gameManager.GamesList.Count}.");
+                                Console.WriteLine($"Please select a valid number from 0 to {gameManager.PlayerList.Count}.");
                                 Console.ForegroundColor = ConsoleColor.White;
                             }
                         } while (optionSelected != "0");
@@ -139,7 +128,7 @@ class NEWProgram
                             else
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine($"Please select a valid number from 0 to {gameManager.GamesList.Count}.");
+                                Console.WriteLine($"Please select a valid number from 0 to {currentPlayerList.Count}.");
                                 Console.ForegroundColor = ConsoleColor.White;
                             }
 
@@ -149,7 +138,7 @@ class NEWProgram
                         optionSelected = "";
                         break;
                     case 3:
-                        foreach (PlayerSuper p in currentPlayerList)
+                        foreach (Player p in currentPlayerList)
                         {
                             Console.ForegroundColor = p.PlayerColor; // change color to player color
                             Console.WriteLine(p);
@@ -172,7 +161,6 @@ class NEWProgram
                             }
                             Console.WriteLine("0. Exit");
                             Console.Write("Select an option: ");
-                            //optionSelected = Convert.ToInt16(Console.ReadLine());
                             optionSelected = Console.ReadLine(); 
                             if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
                             {
@@ -209,7 +197,7 @@ class NEWProgram
                         gameManager.AddPlayer();
                         break;
                     case 6:
-                        foreach (PlayerSuper p in gameManager.PlayerList)
+                        foreach (Player p in gameManager.PlayerList)
                         {
                             Console.ForegroundColor = p.PlayerColor; // change color to player color
                             Console.WriteLine(p);
@@ -231,10 +219,6 @@ class NEWProgram
             else Console.WriteLine("Invalid option, choose a number please.");
 
         } while (optionSelected != "0");
-
-
-        //Connect4Board board = new Connect4Board();
-        //board.ShowMainMenu();
     }
 }
 

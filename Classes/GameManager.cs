@@ -1,20 +1,70 @@
-﻿using SODV1202_Connect4.Classes;
-using System.Reflection;
+﻿using SODV1202_Connect4.Classes.AI;
+using SODV1202_Connect4.Interfaces;
 
 namespace SODV1202_Connect4.Classes
 {
     class GameManager
     {
-        public List<PlayerSuper> PlayerList = new List<PlayerSuper>();
+        private readonly int HumanPlayer = 1;
+        private readonly int AIPlayer = 2;
+        public List<Player> PlayerList = new List<Player>();
         public List<Games> GamesList = new List<Games>();
         public void AddPlayer()
         {
             string playerName = "0"; // created default values because program was not liking empty string or char lol
             char symbol = '0';
+            int typeOfPlayer = HumanPlayer;
+            int difficultyLevel = 1;
             bool choosing = true;
+            IDifficulty difficulty = new AIEasy();//Set easy difficulty as default
             System.ConsoleColor color;
             Console.WriteLine("Enter 0 to exit process");
-            Console.WriteLine("Player name: ");  
+            Console.WriteLine("What type of player do you like to add?:");
+            Console.WriteLine($"{HumanPlayer}. Human");
+            Console.WriteLine($"{AIPlayer}. AI");
+
+            while (choosing)
+            {
+                if (int.TryParse(Console.ReadLine(), out typeOfPlayer) && typeOfPlayer >= 0 && typeOfPlayer <= 2) // input validation for integer and option between 0, 1 and 2
+                {
+                    if (typeOfPlayer == 0) // allow user to exit
+                    {
+                        break;
+                    }
+                }
+                else Console.WriteLine("Please select a valid number!"); // if int Parse fails, output fix for user
+                if (typeOfPlayer == HumanPlayer)
+                {
+                    choosing = false;// break loop since proposed player type was NOT denied in foreach loop
+                }
+                else
+                {
+                    Console.WriteLine("Enter 0 to exit process");
+                    Console.WriteLine("Select the difficulty of the AI:");
+                    Console.WriteLine("1. Easy");
+                    Console.WriteLine("2. Medium");
+                    Console.WriteLine("3. Hard");
+                    if (int.TryParse(Console.ReadLine(), out difficultyLevel) && difficultyLevel >= 0 && difficultyLevel <= 3) // input validation for integer and option between 0, 1, 2 and 3
+                    {
+                        if (difficultyLevel == 0) // allow user to exit
+                        {
+                            break;
+                        }
+                        try
+                        {
+                            if(difficultyLevel == 1) { difficulty = new AIEasy(); }
+                            else if (difficultyLevel == 2) { difficulty = new AIMedium(); }
+                            else if (difficultyLevel == 3) { difficulty = new AIHard(); }
+                            Console.WriteLine(difficulty.GetDescription());
+                            choosing = false;// break loop since proposed AI difficulty was NOT denied in foreach loop
+                        }
+                        catch(NotImplementedException ex) { Console.WriteLine(ex.Message); } //Catch the exception for the not implemented interfaces
+                    }
+                    else Console.WriteLine("Please select a valid number!"); // if int Parse fails, output fix for user
+                }
+            }
+            choosing = true;
+            Console.WriteLine("Player name: ");
             while (choosing)
             {
                 playerName = Console.ReadLine().Replace(" ", string.Empty).Trim(); // name formatting
@@ -27,7 +77,7 @@ namespace SODV1202_Connect4.Classes
                 {
                     // if .Find != null then a matching name was found and the user must try a different name
                     Console.WriteLine("Sorry, player name already taken! please try another");
-                    
+
                 }
                 else choosing = false; // break loop since proposed name was NOT denied in foreach loop
 
@@ -36,12 +86,12 @@ namespace SODV1202_Connect4.Classes
             {
                 return;
             }
-            
+
             choosing = true;
             Console.WriteLine("Symbol (Only one):");
             while (choosing)
             {
- 
+
                 if (char.TryParse(Console.ReadLine(), out symbol)) // input validation for single character
                 {
                     if (symbol == '0') // allow user to exit
@@ -64,9 +114,24 @@ namespace SODV1202_Connect4.Classes
             }
             ColorList();
             color = SelectColor(); // duplicate colors allowed, no validation necessary 
-            PlayerList.Add(new HumanPlayer(playerName, symbol, color)); // add player to list
+            if (typeOfPlayer == 1)
+            {
+                PlayerList.Add(new HumanPlayer(playerName, symbol, color)); // add player to list
+            }
+            else
+            {
+                if (difficultyLevel == 2)
+                {
+                    difficulty = new AIMedium();
+                }
+                else if (difficultyLevel == 3)
+                {
+                    difficulty = new AIHard();
+                }
+                PlayerList.Add(new AIPlayer(playerName, symbol, color, difficulty)); // add aiplayer to list and inject the level of difficulty
+            }
             Console.ForegroundColor = color;
-            Console.WriteLine($"New player added: {PlayerList[PlayerList.Count-1]}"); // display newest player added
+            Console.WriteLine($"New player added: {PlayerList[PlayerList.Count - 1]}"); // display newest player added
             Console.WriteLine("Press any key to continue.");
             Console.ReadLine();
 
@@ -119,7 +184,7 @@ namespace SODV1202_Connect4.Classes
                         case 7: return ConsoleColor.DarkYellow;
                         case 8: return ConsoleColor.Blue;
                         case 9: return ConsoleColor.Green;
-                        case 10:  return ConsoleColor.Red;
+                        case 10: return ConsoleColor.Red;
                         case 11: return ConsoleColor.Magenta;
                         default:
                             Console.WriteLine("Option is not valid. The color assigned for default is white.");
@@ -128,7 +193,7 @@ namespace SODV1202_Connect4.Classes
                 }
                 else Console.WriteLine("Invalid option please choose a valid number!");
             }
-            
+
 
 
 

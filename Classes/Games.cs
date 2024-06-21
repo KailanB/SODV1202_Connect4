@@ -10,9 +10,9 @@
         public int MaxPlayers { get; protected set; }
         public int MinPlayers { get; protected set; }
 
-        public abstract void Play(List<PlayerSuper> playerList);
+        public abstract void Play(List<Player> playerList);
         public abstract void ResetGame();
-        public abstract void DisplayGame(List<PlayerSuper> playerList);
+        public abstract void DisplayGame(List<Player> playerList);
         public abstract void DisplayGameRules();
         public abstract bool CheckForWin();
 
