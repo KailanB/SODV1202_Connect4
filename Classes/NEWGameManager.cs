@@ -13,7 +13,7 @@ namespace SODV1202_Connect4.Classes
             char symbol = '0';
             bool choosing = true;
             System.ConsoleColor color;
-            Console.WriteLine("Enter 0 at any time to exit process");
+            Console.WriteLine("Enter 0 to exit process");
             Console.WriteLine("Player name: ");  
             while (choosing)
             {
@@ -41,19 +41,22 @@ namespace SODV1202_Connect4.Classes
             Console.WriteLine("Symbol (Only one):");
             while (choosing)
             {
+ 
+                if (char.TryParse(Console.ReadLine(), out symbol)) // input validation for single character
+                {
+                    if (symbol == '0') // allow user to exit
+                    {
+                        break;
+                    }
+                    // check all player symbols with .Find
+                    if ((PlayerList.Find(player => player.PlayerSymbol == symbol) != null) || symbol == '#') // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-8.0  Find element within a list
+                    {
+                        Console.WriteLine("Sorry, player symbol already taken! please try another");
+                    }
+                    else choosing = false;// break loop since proposed symbol was NOT denied in foreach loop
+                }
+                else Console.WriteLine("Please select a SINGLE character!"); // if char Parse fails, output fix for user
 
-                // TODO NEED input validation to make sure a valid singular symbol is chosen. Currently user can pass with a string which doesn't create the character object properly
-                char.TryParse(Console.ReadLine(), out symbol);//validate non duplicated symbol or at least with the same color
-                if (symbol == '0') // allow user to exit
-                {
-                    break;
-                }
-                // check all player symbols with .Find
-                if ((PlayerList.Find(player => player.PlayerSymbol == symbol) != null) || symbol == '#') // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-8.0  Find element within a list
-                {
-                    Console.WriteLine("Sorry, player symbol already taken! please try another");
-                }
-                else choosing = false;// break loop since proposed symbol was NOT denied in foreach loop
             }
             if (symbol == '0')
             {
@@ -73,27 +76,27 @@ namespace SODV1202_Connect4.Classes
         {
 
             Console.WriteLine("Select color: ");
-            Console.WriteLine("0. White ");
+            Console.WriteLine("1. White ");
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine("1. Dark Blue ");
+            Console.WriteLine("2. Dark Blue ");
             Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("2. Dark Green ");
+            Console.WriteLine("3. Dark Green ");
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine("3. Dark Blue-Green ");
+            Console.WriteLine("4. Dark Blue-Green ");
             Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("4. Dark Red ");
+            Console.WriteLine("5. Dark Red ");
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("5. Dark Magenta ");
+            Console.WriteLine("6. Dark Magenta ");
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("6. Dark Yellow ");
+            Console.WriteLine("7. Dark Yellow ");
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("7. Blue ");
+            Console.WriteLine("8. Blue ");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("8. Green ");
+            Console.WriteLine("9. Green ");
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("9. Red ");
+            Console.WriteLine("10. Red ");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("10. Magenta ");
+            Console.WriteLine("11. Magenta ");
         }
 
         private System.ConsoleColor SelectColor()
@@ -107,17 +110,17 @@ namespace SODV1202_Connect4.Classes
                 {
                     switch (color)
                     {
-                        case 0: return ConsoleColor.White;
-                        case 1: return ConsoleColor.DarkBlue;
-                        case 2: return ConsoleColor.DarkGreen;
-                        case 3: return ConsoleColor.DarkCyan;
-                        case 4: return ConsoleColor.DarkRed;
-                        case 5: return ConsoleColor.DarkMagenta;
-                        case 6: return ConsoleColor.DarkYellow;
-                        case 7: return ConsoleColor.Blue;
-                        case 8: return ConsoleColor.Green;
-                        case 9: return ConsoleColor.Red;
-                        case 10: return ConsoleColor.Magenta;
+                        case 1: return ConsoleColor.White;
+                        case 2: return ConsoleColor.DarkBlue;
+                        case 3: return ConsoleColor.DarkGreen;
+                        case 4: return ConsoleColor.DarkCyan;
+                        case 5: return ConsoleColor.DarkRed;
+                        case 6: return ConsoleColor.DarkMagenta;
+                        case 7: return ConsoleColor.DarkYellow;
+                        case 8: return ConsoleColor.Blue;
+                        case 9: return ConsoleColor.Green;
+                        case 10:  return ConsoleColor.Red;
+                        case 11: return ConsoleColor.Magenta;
                         default:
                             Console.WriteLine("Option is not valid. The color assigned for default is white.");
                             return ConsoleColor.White;

@@ -1,6 +1,6 @@
 namespace SODV1202_Connect4.Classes
 {
-	abstract class PlayerSuper 
+	abstract class PlayerSuper
 	{
 		protected PlayerSuper(string name, char c, System.ConsoleColor color)
 		{
@@ -22,5 +22,7 @@ namespace SODV1202_Connect4.Classes
         {
             Losses++;
         }
+
+        
     }
 }

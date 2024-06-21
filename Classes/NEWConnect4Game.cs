@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Net.Security;
 
 namespace SODV1202_Connect4.Classes
 {
@@ -19,7 +20,10 @@ namespace SODV1202_Connect4.Classes
 
         public override void Play(List<PlayerSuper> playerList)
         {
+            string optionSelected = "";
+            int selectionToInt;
             int playerNumber = 0;
+            bool selecting = true;
             do
             {
                 Console.Clear();
@@ -54,18 +58,63 @@ namespace SODV1202_Connect4.Classes
 
             } while (!EndGame);
             EndGame = false; // switch to false again so that game can be played again
+            Console.WriteLine("1. to play again"); // added play again option at the end of connect4
+            Console.WriteLine("0. to exit");
+            do
+            {
+                optionSelected = Console.ReadLine();
+                if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                {
+                    if (selectionToInt == 1 || selectionToInt == 0) // loop depends on selection being 1 or 0
+                    {
+                        selecting = false; 
+                    }
+                    else if (selectionToInt != 0 && selectionToInt != 1) // input validation output
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Please select 1 or 0.");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                }
+                else // input validation output
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Please select 1 or 0.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                if (selectionToInt == 1) // if user selects to play again reset game and call Play method within this class using the same players. Recursion.
+                {
+                    ResetGame();
+                    Play(playerList);
+                }
+                if (optionSelected == "0") Console.Clear(); // if user selects to not play again, clear console and exit method, returning to games list selection loop in main Program
+
+            } while (selecting);
         }
 
+
+        
         public void SelectColumnToPlay(PlayerSuper player)
-        {
+        {   
+
             int column;
+            bool choosing = true;
             bool validPosition = false;
             do
             {
                 Console.ForegroundColor = player.PlayerColor;
                 Console.WriteLine($"Player: {player.PlayerName} ({player.PlayerSymbol}) choose a column to play");
                 Console.ForegroundColor = ConsoleColor.White;
-                column = Convert.ToInt16(Console.ReadLine());
+                do // added input validation for column selection
+                {
+                    if (int.TryParse(Console.ReadLine(), out column)) choosing = false;
+                    else
+                    {
+                        Console.WriteLine("Invalid input. Please Select a number from 1 to 7.");
+                    }
+                } while (choosing);
+                // column = Convert.ToInt16(Console.ReadLine()); // changed to TryParse for input validation
                 if (column <= Columns && (column > 0)) // correct column validation
                 {
                     for (int i = Rows - 1; i >= 0; i--) // start from the bottom of the board checking for a valid row to play in
@@ -82,6 +131,7 @@ namespace SODV1202_Connect4.Classes
 
             } while (column > Columns || !validPosition);
         }
+        
 
         public override void ResetGame()
         {
@@ -136,6 +186,7 @@ namespace SODV1202_Connect4.Classes
         public override void DisplayGameRules()
         {
             // I figured we could have a basic console output explaining the rules of the game as an option in the main menu
+            Console.WriteLine("   Connect 4 is a 2-player game with a goal to connect 4 of your own symbols in a row. \n   This can be horizontal, vertical or diagonal. \n   Don't forget to block your opponents moves!");
         }
         public override bool CheckForWin()
         {
@@ -147,7 +198,6 @@ namespace SODV1202_Connect4.Classes
                     {
                         Console.WriteLine("test horizontal");
                         return true;
-                        // we can incorporate a SequenceToWin value method later
                     }
 
                 }
