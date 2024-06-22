@@ -4,17 +4,61 @@ using SODV1202_Connect4.Interfaces;
 
 namespace SODV1202_Connect4.Classes
 {
-    class GameManager
+    static class GameManager
     {
         private static readonly int HumanPlayer = 1;
         private static readonly int AIPlayer = 2;
-        private string optionSelected;
-        private int selectionToInt;
-        public List<Player> PlayerList = new List<Player>();
-        public List<Games> GamesList = new List<Games>();
+        private static string optionSelected;
+        private static int selectionToInt;
+        public static List<Player> PlayerList = new List<Player>();
+        public static List<Games> GamesList = new List<Games>();
 
 
-        public void AddPlayer(List<Player> currentPlayerList)
+        public static void SelectGameToPlay(List<Player> currentPlayerList)
+        {
+            do
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("------------- Games -------------");
+                Console.ForegroundColor = ConsoleColor.White;
+                for (int i = 0; i < GamesList.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {GamesList[i]}:");
+                    Console.WriteLine(GamesList[i].DisplayGameRules());
+                }
+                Console.WriteLine("0. Exit");
+                Console.Write("Select an option: ");
+                optionSelected = Console.ReadLine();
+                if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                {
+                    if ((selectionToInt <= GamesList.Count) && selectionToInt != 0)
+                    {
+                        if (currentPlayerList.Count > GamesList[selectionToInt - 1].MaxPlayers) // check for valid number of players. There's probably a better way to do this but I am getting tired for today XD
+                        {
+                            Messages.ShowWarningMessage($"Too many players for this game type! Connect 4 is a {GamesList[selectionToInt - 1].MaxPlayers} player game.");
+                        }
+                        else if (currentPlayerList.Count < GamesList[selectionToInt - 1].MinPlayers)
+                        {
+                            Messages.ShowWarningMessage($"Too few players for this game type! Connect 4 is a {GamesList[selectionToInt - 1].MinPlayers} player game.");
+                        }
+                        else
+                        {
+                            GamesList[selectionToInt - 1].ResetGame(); // set with default symbols
+                            GamesList[selectionToInt - 1].Play(currentPlayerList); // send list of players to play the game
+                        }
+                    }
+                    else if (selectionToInt != 0)
+                    {
+                        Messages.ShowErrorMessage("Invalid option!!!!");
+                    }
+                }
+                else Messages.ShowErrorMessage($"Please select a valid number from 0 to {GamesList.Count}.");
+
+            } while (optionSelected != "0");
+            Console.Clear();
+            optionSelected = ""; // change optionSelected to something other than 0 so that loop does not break and we go back to the main menu
+        }
+        public static void AddPlayer(List<Player> currentPlayerList)
         {
             do
             {
@@ -66,7 +110,7 @@ namespace SODV1202_Connect4.Classes
             Console.Clear();
             optionSelected = "";
         }
-        public void RemovePlayer(List<Player> currentPlayerList)
+        public static void RemovePlayer(List<Player> currentPlayerList)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("------------- Registered Players -------------");
@@ -111,7 +155,7 @@ namespace SODV1202_Connect4.Classes
             optionSelected = "";
         }
 
-        public void CreateNewPlayer()
+        public static void CreateNewPlayer()
         {
             string playerName = "0"; // created default values because program was not liking empty string or char lol
             char symbol = '0';
@@ -142,6 +186,7 @@ namespace SODV1202_Connect4.Classes
                 choosing = true;
                 while (choosing)
                 {
+                    Console.WriteLine("Enter 0 to exit process");
                     Console.WriteLine("Enter 0 to exit process");
                     Console.WriteLine("Select the difficulty of the AI:");
                     Console.WriteLine("1. Easy");
@@ -223,25 +268,63 @@ namespace SODV1202_Connect4.Classes
             {
                 return;
             }
-            ColorList();
-            color = SelectColor(); // duplicate colors allowed, no validation necessary 
-            if (typeOfPlayer == 1)
+            Console.WriteLine("Select player color?");
+            Console.WriteLine("1. Yes");
+            Console.WriteLine("0. No");
+            choosing = true;
+            do
             {
-                PlayerList.Add(new HumanPlayer(playerName, symbol, color)); // add player to list
-            }
-            else
-            {
-                if (difficultyLevel == 2)
+                if (int.TryParse(Console.ReadLine(), out selectionToInt))
                 {
-                    difficulty = new AIMedium();
+                    if (selectionToInt == 1)
+                    {
+                        ColorList();
+                        color = SelectColor(); // duplicate colors allowed, no validation necessary 
+                        if (typeOfPlayer == 1)
+                        {
+                            PlayerList.Add(new HumanPlayer(playerName, symbol, color)); // add player to list
+                            choosing = false;
+                        }
+                        else
+                        {
+                            if (difficultyLevel == 2)
+                            {
+                                difficulty = new AIMedium();
+                            }
+                            else if (difficultyLevel == 3)
+                            {
+                                difficulty = new AIHard();
+                            }
+                            PlayerList.Add(new AIPlayer(playerName, symbol, color, difficulty)); // add aiplayer to list and inject the level of difficulty
+                            choosing = false;
+                        }
+                    }
+                    else if (selectionToInt == 0)
+                    {
+                        if (typeOfPlayer == 1)
+                        {
+                            PlayerList.Add(new HumanPlayer(playerName, symbol)); // add player to list
+                            choosing = false;
+                        }
+                        else
+                        {
+                            if (difficultyLevel == 2)
+                            {
+                                difficulty = new AIMedium();
+                            }
+                            else if (difficultyLevel == 3)
+                            {
+                                difficulty = new AIHard();
+                            }
+                            PlayerList.Add(new AIPlayer(playerName, symbol, difficulty)); // add aiplayer to list and inject the level of difficulty
+                            choosing = false;
+                        }
+                    }
+
                 }
-                else if (difficultyLevel == 3)
-                {
-                    difficulty = new AIHard();
-                }
-                PlayerList.Add(new AIPlayer(playerName, symbol, color, difficulty)); // add aiplayer to list and inject the level of difficulty
-            }
-            Console.ForegroundColor = color;
+                else Messages.ShowErrorMessage("Invalid selection please choose 1 or 0");
+            } while (choosing);
+            Console.ForegroundColor = PlayerList[PlayerList.Count - 1].PlayerColor;
             Console.WriteLine($"New player added: {PlayerList[PlayerList.Count - 1]}"); // display newest player added
             Console.WriteLine("Press any key to continue.");
             Console.ReadLine();

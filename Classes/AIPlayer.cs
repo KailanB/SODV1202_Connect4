@@ -10,6 +10,12 @@ namespace SODV1202_Connect4.Classes
             Difficulty = difficulty;
             IsAI = true;
         }
+        public AIPlayer(string name, char c, IDifficulty difficulty) : base(name, c)
+        {
+            Difficulty = difficulty;
+            IsAI = true;
+        }
+
 
         public override string ToString() { return $"AI {PlayerName} - {PlayerSymbol}"; }
     }

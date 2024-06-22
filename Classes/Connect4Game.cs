@@ -42,6 +42,7 @@
                 DisplayGame(playerList);
                 Player currentPlayer = playerList[playerNumber];
                 SelectColumnToPlay(currentPlayer);
+                if (EndGame == true) break;
                 if (playerNumber >= MaxPlayers - 1)
                 {
                     playerNumber = 0;
@@ -52,6 +53,11 @@
                 }
                 Console.Clear(); // added another clear that way multiple boards are not displayed
                 DisplayGame(playerList);
+                if (checkForDraw())
+                {
+                    EndGame = true;
+                    Console.WriteLine("Draw! Game over. No valid spaces left to play.");
+                }
                 if (CheckForWin())  // check for winner and EndGame true to break loop
                 {
                     EndGame = true;
@@ -110,7 +116,7 @@
         private void SelectColumnToPlay(Player player)
         {
 
-            int column;
+            int column = 1;
             bool choosing = true;
             bool validPosition = false;
             do
@@ -122,6 +128,7 @@
                     column = currentAIPlayer.Difficulty.Connect4BoardMove(this);
                     if(column != -1)
                     {
+                        
                         Console.WriteLine($"Player: {player.PlayerName} ({player.PlayerSymbol}) selected column {column} to make a move");
                         Thread.Sleep(1500); //Add a wait to see the AI move
                     }
@@ -133,10 +140,22 @@
                 }
                 else
                 {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("Select 0 to quit current game.");
+                    Console.ForegroundColor = player.PlayerColor;
                     Console.WriteLine($"Player: {player.PlayerName} ({player.PlayerSymbol}) choose a column to play");
                     do // added input validation for column selection
                     {
-                        if (int.TryParse(Console.ReadLine(), out column)) choosing = false;
+                        if (int.TryParse(Console.ReadLine(), out column))
+                        {
+                            choosing = false;
+                            if (column == 0)
+                            {
+                                EndGame = true;
+                                Console.ForegroundColor = ConsoleColor.White;
+                                return;
+                            }
+                        }
                         else
                         {
                             Console.WriteLine("Invalid input. Please Select a number from 1 to 7.");
@@ -156,6 +175,7 @@
                         }
                     }
                 }
+                
                 else Console.WriteLine("Invalid column");
                 Console.ForegroundColor = ConsoleColor.White;
 
@@ -214,10 +234,10 @@
             }
             Console.WriteLine("-----------------------------------------------");
         }
-        public override void DisplayGameRules()
+        public override string DisplayGameRules()
         {
             // I figured we could have a basic console output explaining the rules of the game as an option in the main menu
-            Console.WriteLine("   Connect 4 is a 2-player game with a goal to connect 4 of your own symbols in a row. \n   This can be horizontal, vertical or diagonal. \n   Don't forget to block your opponents moves!");
+            return base.DisplayGameRules() + "   The goal of the game is to connect 4 of your own symbols in a row. \n   This can be horizontal, vertical or diagonal. \n   Don't forget to block your opponents moves!";
         }
         protected override bool CheckForWin()
         {
@@ -228,7 +248,6 @@
                     if (((Connect4Board[i, j].PlayerSymbol == Connect4Board[i, j + 1].PlayerSymbol) && (Connect4Board[i, j + 1].PlayerSymbol == Connect4Board[i, j + 2].PlayerSymbol)
                         && (Connect4Board[i, j + 2].PlayerSymbol == Connect4Board[i, j + 3].PlayerSymbol)) && Connect4Board[i, j].PlayerSymbol != '#')
                     {
-                        Console.WriteLine("test horizontal");//TODO: Remove this test line
                         return true;
                     }
 
@@ -242,7 +261,6 @@
                     if (((Connect4Board[i, j].PlayerSymbol == Connect4Board[i + 1, j].PlayerSymbol) && (Connect4Board[i + 1, j].PlayerSymbol == Connect4Board[i + 2, j].PlayerSymbol)
                         && (Connect4Board[i + 2, j].PlayerSymbol == Connect4Board[i + 3, j].PlayerSymbol)) && Connect4Board[i, j].PlayerSymbol != '#')
                     {
-                        Console.WriteLine("test vertical");//TODO: Remove this test line
                         return true;
                     }
 
@@ -260,8 +278,22 @@
                     }
                 }
             }
-
             return false;
+        }
+        private bool checkForDraw()
+        {
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Columns; j++)
+                {
+                    if (Connect4Board[i, j].PlayerSymbol == '#')
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+            
         }
 
         readonly int ConnectForWin = 4; //This value should be dynamic to change the total of continous cells to win

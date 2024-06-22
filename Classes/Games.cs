@@ -6,6 +6,14 @@
         {
             GameName = name;
         }
+
+        protected Games(string name, int minPlayers, int maxPlayers)
+        {
+            GameName = name;
+            MinPlayers = minPlayers;
+            MaxPlayers = maxPlayers;
+        }
+
         public string GameName { get; protected set; }
         public int MaxPlayers { get; protected set; }
         public int MinPlayers { get; protected set; }
@@ -13,7 +21,10 @@
         public abstract void Play(List<Player> playerList);
         public abstract void ResetGame();
         protected abstract void DisplayGame(List<Player> playerList);
-        public abstract void DisplayGameRules();
+        public virtual string DisplayGameRules()
+        {
+            return $"   {GameName} requires a minimum of {MinPlayers} players and a maximum of {MaxPlayers} players.\n"; // spaces at the beginning are intentional so that it is indented under the displayed game
+        }
         protected abstract bool CheckForWin();
 
         public override string ToString()

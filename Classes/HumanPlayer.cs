@@ -6,6 +6,9 @@ namespace SODV1202_Connect4.Classes
         public HumanPlayer(string name, char c, System.ConsoleColor color) : base(name, c, color)
         {
         }
+        public HumanPlayer(string name, char c) : base(name, c)
+        {
+        }
 
 
         public string CheckStats() // IMPLEMENT THIS METHOD
