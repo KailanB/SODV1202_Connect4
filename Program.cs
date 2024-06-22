@@ -1,5 +1,6 @@
 ﻿using SODV1202_Connect4.Classes;
 using SODV1202_Connect4.Classes.AI;
+using SODV1202_Connect4.Common;
 
 namespace SODV1202_Connect4;
 class Program
@@ -89,11 +90,11 @@ class Program
                                 {
                                     if (currentPlayerList.Count > gameManager.GamesList[selectionToInt - 1].MaxPlayers) // check for valid number of players. There's probably a better way to do this but I am getting tired for today XD
                                     {
-                                        Console.WriteLine("Too many players for this game type! Connect 4 is a 2 player game.");
+                                        Messages.ShowWarningMessage($"Too many players for this game type! Connect 4 is a {gameManager.GamesList[selectionToInt - 1].MaxPlayers} player game.");
                                     }
                                     else if (currentPlayerList.Count < gameManager.GamesList[selectionToInt - 1].MinPlayers)
                                     {
-                                        Console.WriteLine("Too few players for this game type! Connect 4 is a 2 player game.");
+                                        Messages.ShowWarningMessage($"Too few players for this game type! Connect 4 is a {gameManager.GamesList[selectionToInt - 1].MinPlayers} player game.");
                                     }
                                     else
                                     {
@@ -103,9 +104,7 @@ class Program
                                 }
                                 else if (selectionToInt != 0)
                                 {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Invalid option!!!!");
-                                    Console.ForegroundColor = ConsoleColor.White;
+                                    Messages.ShowErrorMessage("Invalid option!!!!");
                                 }
                             }
                             else Console.WriteLine($"Please select a valid number from 0 to {gameManager.GamesList.Count}.");
@@ -132,8 +131,7 @@ class Program
                         Console.WriteLine("Copyright 2024. KaSa Studio. All rights reserved.");
                         break;
                     default:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid option!!!!");
+                        Messages.ShowErrorMessage("Invalid option!!!!");
                         break;
                 }
             }

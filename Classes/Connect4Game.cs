@@ -33,8 +33,7 @@
 
         public override void Play(List<Player> playerList)
         {
-            string optionSelected = "";
-            int selectionToInt;
+            string optionSelected;
             int playerNumber = 0;
             bool selecting = true;
             do
@@ -76,7 +75,7 @@
             do
             {
                 optionSelected = Console.ReadLine();
-                if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                if (int.TryParse(optionSelected, out int selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
                 {
                     if (selectionToInt == 1 || selectionToInt == 0) // loop depends on selection being 1 or 0
                     {

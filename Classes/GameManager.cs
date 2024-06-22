@@ -1,12 +1,13 @@
 ﻿using SODV1202_Connect4.Classes.AI;
+using SODV1202_Connect4.Common;
 using SODV1202_Connect4.Interfaces;
 
 namespace SODV1202_Connect4.Classes
 {
     class GameManager
     {
-        private readonly int HumanPlayer = 1;
-        private readonly int AIPlayer = 2;
+        private static readonly int HumanPlayer = 1;
+        private static readonly int AIPlayer = 2;
         private string optionSelected;
         private int selectionToInt;
         public List<Player> PlayerList = new List<Player>();
@@ -31,30 +32,35 @@ namespace SODV1202_Connect4.Classes
                     else Console.WriteLine($"{i + 1} (Currently Playing) {PlayerList[i]}");
 
                 }
-                if (count == 0) Console.WriteLine("No players available to add.");
-                Console.WriteLine("Press 0 to exit.");
-                if (count > 0) Console.Write("Select player to add: ");
-                
-                optionSelected = Console.ReadLine();
-                if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                if (count == 0)
                 {
-                    if ((selectionToInt <= PlayerList.Count) && selectionToInt != 0 && !currentPlayerList.Exists(p => p.PlayerName == PlayerList[selectionToInt - 1].PlayerName)) //Prevent the same player being added multiple times
-                    {
-                        Console.WriteLine($"{PlayerList[selectionToInt - 1]} added to currently playing.");
-                        currentPlayerList.Add(PlayerList[selectionToInt - 1]);
-                    }
-                    else if (selectionToInt != 0)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid number selection!!!!");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
+                    Messages.ShowWarningMessage("No players available to add.");
+                    optionSelected = "0";
+                    Console.WriteLine("Press any key to continue.");
+                    Console.ReadLine();
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Please select a valid number from 0 to {PlayerList.Count}.");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine("Press 0 to exit.");
+                    if (count > 0) Console.Write("Select player to add: ");
+
+                    optionSelected = Console.ReadLine();
+                    if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                    {
+                        if ((selectionToInt <= PlayerList.Count) && selectionToInt != 0 && !currentPlayerList.Exists(p => p.PlayerName == PlayerList[selectionToInt - 1].PlayerName)) //Prevent the same player being added multiple times
+                        {
+                            Console.WriteLine($"{PlayerList[selectionToInt - 1]} added to currently playing.");
+                            currentPlayerList.Add(PlayerList[selectionToInt - 1]);
+                        }
+                        else if (selectionToInt != 0)
+                        {
+                            Messages.ShowErrorMessage("Invalid number selection!!!!");
+                        }
+                    }
+                    else
+                    {
+                        Messages.ShowErrorMessage($"Please select a valid number from 0 to {PlayerList.Count}.");
+                    }
                 }
             } while (optionSelected != "0");
             Console.Clear();
@@ -74,34 +80,37 @@ namespace SODV1202_Connect4.Classes
 
                 Console.WriteLine("0. Exit");
                 if (currentPlayerList.Count > 0) Console.Write("Select player to remove: ");
-                if (currentPlayerList.Count == 0) Console.WriteLine("No players to remove, \nSelect 0 to exit.");
-                optionSelected = Console.ReadLine();
-                if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
-                {
-                    if ((selectionToInt <= currentPlayerList.Count) && selectionToInt != 0)
-                    {
-                        currentPlayerList.Remove(currentPlayerList[selectionToInt - 1]);
-                    }
-                    else if (selectionToInt != 0)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Invalid number selection!!!!");
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-
+                if (currentPlayerList.Count == 0) {
+                    Messages.ShowWarningMessage("No players to remove");
+                    optionSelected = "0";
+                    Console.WriteLine("Press any key to continue.");
+                    Console.ReadLine();
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Please select a valid number from 0 to {currentPlayerList.Count}.");
-                    Console.ForegroundColor = ConsoleColor.White;
+                    optionSelected = Console.ReadLine();
+                    if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                    {
+                        if ((selectionToInt <= currentPlayerList.Count) && selectionToInt != 0)
+                        {
+                            currentPlayerList.Remove(currentPlayerList[selectionToInt - 1]);
+                        }
+                        else if (selectionToInt != 0)
+                        {
+                            Messages.ShowErrorMessage("Invalid number selection!!!!");
+                        }
+                    }
+                    else
+                    {
+                        Messages.ShowErrorMessage($"Please select a valid number from 0 to {currentPlayerList.Count}.");
+                    }
                 }
-
             } while (optionSelected != "0");
 
             Console.Clear();
             optionSelected = "";
         }
+
         public void CreateNewPlayer()
         {
             string playerName = "0"; // created default values because program was not liking empty string or char lol
@@ -126,11 +135,12 @@ namespace SODV1202_Connect4.Classes
                     }
                 }
                 else Console.WriteLine("Please select a valid number!"); // if int Parse fails, output fix for user
-                if (typeOfPlayer == HumanPlayer)
-                {
-                    choosing = false;// break loop since proposed player type was NOT denied in foreach loop
-                }
-                else
+                choosing = false;// break loop since proposed player type was NOT denied in foreach loop
+            }
+            if (typeOfPlayer == AIPlayer) //This menu it's only showed when the type of player it's AI
+            {
+                choosing = true;
+                while (choosing)
                 {
                     Console.WriteLine("Enter 0 to exit process");
                     Console.WriteLine("Select the difficulty of the AI:");
@@ -145,34 +155,42 @@ namespace SODV1202_Connect4.Classes
                         }
                         try
                         {
-                            if(difficultyLevel == 1) { difficulty = new AIEasy(); }
+                            if (difficultyLevel == 1) { difficulty = new AIEasy(); }
                             else if (difficultyLevel == 2) { difficulty = new AIMedium(); }
                             else if (difficultyLevel == 3) { difficulty = new AIHard(); }
                             Console.WriteLine(difficulty.GetDescription());
                             choosing = false;// break loop since proposed AI difficulty was NOT denied in foreach loop
                         }
-                        catch(NotImplementedException ex) { Console.WriteLine(ex.Message); } //Catch the exception for the not implemented interfaces
+                        catch (NotImplementedException ex) { Messages.ShowErrorMessage(ex.Message); } //Catch the exception for the not implemented interfaces
                     }
-                    else Console.WriteLine("Please select a valid number!"); // if int Parse fails, output fix for user
+                    else Messages.ShowErrorMessage("Please select a valid number!");// if int Parse fails, output fix for user
                 }
             }
             choosing = true;
             Console.WriteLine("Player name: ");
             while (choosing)
             {
-                playerName = Console.ReadLine().Replace(" ", string.Empty).Trim(); // name formatting
-                if (playerName == "0") // allow user to exit at any time by using 0
+                playerName = Console.ReadLine();
+                if (!string.IsNullOrEmpty(playerName))
                 {
-                    break;
-                }
-                // check all player names in the list with .Find 
-                if (PlayerList.Find(player => player.PlayerName == playerName) != null) // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-8.0  Find element within a list
-                {
-                    // if .Find != null then a matching name was found and the user must try a different name
-                    Console.WriteLine("Sorry, player name already taken! please try another");
+                    playerName = playerName.Replace(" ", string.Empty).Trim(); // name formatting
+                    if (playerName == "0") // allow user to exit at any time by using 0
+                    {
+                        break;
+                    }
+                    // check all player names in the list with .Find 
+                    if (PlayerList.Find(player => player.PlayerName == playerName) != null) // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-8.0  Find element within a list
+                    {
+                        // if .Find != null then a matching name was found and the user must try a different name
+                        Messages.ShowWarningMessage("Sorry, player name already taken! please try another");
 
+                    }
+                    else choosing = false; // break loop since proposed name was NOT denied in foreach loop
                 }
-                else choosing = false; // break loop since proposed name was NOT denied in foreach loop
+                else
+                {
+                    Messages.ShowErrorMessage("The player name can not be empty");
+                }
 
             }
             if (playerName == "0")
@@ -194,11 +212,11 @@ namespace SODV1202_Connect4.Classes
                     // check all player symbols with .Find
                     if ((PlayerList.Find(player => player.PlayerSymbol == symbol) != null) || symbol == '#') // https://learn.microsoft.com/en-us/dotnet/api/system.collections.generic.list-1.find?view=net-8.0  Find element within a list
                     {
-                        Console.WriteLine("Sorry, player symbol already taken! please try another");
+                        Messages.ShowWarningMessage("Sorry, player symbol already taken! please try another");
                     }
                     else choosing = false;// break loop since proposed symbol was NOT denied in foreach loop
                 }
-                else Console.WriteLine("Please select a SINGLE character!"); // if char Parse fails, output fix for user
+                else Messages.ShowErrorMessage("Please select a SINGLE character!"); // if char Parse fails, output fix for user
 
             }
             if (symbol == '0')
@@ -230,9 +248,7 @@ namespace SODV1202_Connect4.Classes
 
         }
 
-        
-
-        private void ColorList()
+        private static void ColorList()
         {
 
             Console.WriteLine("Select color: ");
@@ -257,16 +273,15 @@ namespace SODV1202_Connect4.Classes
             Console.WriteLine("10. Red ");
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("11. Magenta ");
+            Console.ForegroundColor = ConsoleColor.White;//Change the color to the default
         }
 
-        private System.ConsoleColor SelectColor()
+        private static System.ConsoleColor SelectColor()
         {
             while (true)
             {
-                string optionSelected;
-                int color;
-                optionSelected = Console.ReadLine();
-                if (int.TryParse(optionSelected, out color)) // input validation so switch does not crash with non-integer inputs
+                string optionSelected = Console.ReadLine();
+                if (int.TryParse(optionSelected, out int color)) // input validation so switch does not crash with non-integer inputs
                 {
                     switch (color)
                     {
@@ -282,16 +297,12 @@ namespace SODV1202_Connect4.Classes
                         case 10: return ConsoleColor.Red;
                         case 11: return ConsoleColor.Magenta;
                         default:
-                            Console.WriteLine("Option is not valid. The color assigned for default is white.");
+                            Messages.ShowErrorMessage("The option selected is not valid. The color assigned for default is white.");
                             return ConsoleColor.White;
                     }
                 }
                 else Console.WriteLine("Invalid option please choose a valid number!");
             }
-
-
-
-
         }
     }
 }
