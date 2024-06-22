@@ -12,9 +12,9 @@
 
         public abstract void Play(List<Player> playerList);
         public abstract void ResetGame();
-        public abstract void DisplayGame(List<Player> playerList);
+        protected abstract void DisplayGame(List<Player> playerList);
         public abstract void DisplayGameRules();
-        public abstract bool CheckForWin();
+        protected abstract bool CheckForWin();
 
         public override string ToString()
         {

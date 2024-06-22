@@ -7,10 +7,16 @@ namespace SODV1202_Connect4.Classes
         {
         }
 
+
+        public string CheckStats() // IMPLEMENT THIS METHOD
+        {
+            return $"{PlayerName} game stats:\nWins: {Wins}\nLosses: {Losses}\nTotal Games:{Wins + Losses}";
+        }
+
         public override string ToString() { return $"{PlayerName} - {PlayerSymbol}"; }
 
 
     }
 
     
-}
+} 

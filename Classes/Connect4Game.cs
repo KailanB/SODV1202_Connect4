@@ -108,7 +108,7 @@
 
 
 
-        public void SelectColumnToPlay(Player player)
+        private void SelectColumnToPlay(Player player)
         {
 
             int column;
@@ -175,7 +175,7 @@
                 }
             }
         }
-        public override void DisplayGame(List<Player> playerList)
+        protected override void DisplayGame(List<Player> playerList)
         {
             Console.WriteLine("-----------------------------------------------");
             Console.WriteLine("Board");
@@ -220,7 +220,7 @@
             // I figured we could have a basic console output explaining the rules of the game as an option in the main menu
             Console.WriteLine("   Connect 4 is a 2-player game with a goal to connect 4 of your own symbols in a row. \n   This can be horizontal, vertical or diagonal. \n   Don't forget to block your opponents moves!");
         }
-        public override bool CheckForWin()
+        protected override bool CheckForWin()
         {
             for (int i = 0; i < Rows; i++) // validate winner for vertical (column) wins
             {

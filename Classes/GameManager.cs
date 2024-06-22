@@ -7,9 +7,102 @@ namespace SODV1202_Connect4.Classes
     {
         private readonly int HumanPlayer = 1;
         private readonly int AIPlayer = 2;
+        private string optionSelected;
+        private int selectionToInt;
         public List<Player> PlayerList = new List<Player>();
         public List<Games> GamesList = new List<Games>();
-        public void AddPlayer()
+
+
+        public void AddPlayer(List<Player> currentPlayerList)
+        {
+            do
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("------------- Registered Players -------------");
+                Console.ForegroundColor = ConsoleColor.White;
+                int count = 0; // counter to make sure we are displaying at least one player. If not output message no players available
+                for (int i = 0; i < PlayerList.Count; i++)
+                {
+                    if (currentPlayerList.Find(player => player.PlayerName == PlayerList[i].PlayerName) == null)
+                    {
+                        Console.WriteLine($"{i + 1}. {PlayerList[i]}");
+                        count++;
+                    }
+                    else Console.WriteLine($"{i + 1} (Currently Playing) {PlayerList[i]}");
+
+                }
+                if (count == 0) Console.WriteLine("No players available to add.");
+                Console.WriteLine("Press 0 to exit.");
+                if (count > 0) Console.Write("Select player to add: ");
+                
+                optionSelected = Console.ReadLine();
+                if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                {
+                    if ((selectionToInt <= PlayerList.Count) && selectionToInt != 0 && !currentPlayerList.Exists(p => p.PlayerName == PlayerList[selectionToInt - 1].PlayerName)) //Prevent the same player being added multiple times
+                    {
+                        Console.WriteLine($"{PlayerList[selectionToInt - 1]} added to currently playing.");
+                        currentPlayerList.Add(PlayerList[selectionToInt - 1]);
+                    }
+                    else if (selectionToInt != 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid number selection!!!!");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Please select a valid number from 0 to {PlayerList.Count}.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+            } while (optionSelected != "0");
+            Console.Clear();
+            optionSelected = "";
+        }
+        public void RemovePlayer(List<Player> currentPlayerList)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("------------- Registered Players -------------");
+            Console.ForegroundColor = ConsoleColor.White;
+            do
+            {
+                for (int i = 0; i < currentPlayerList.Count; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {currentPlayerList[i]}");
+                }
+
+                Console.WriteLine("0. Exit");
+                if (currentPlayerList.Count > 0) Console.Write("Select player to remove: ");
+                if (currentPlayerList.Count == 0) Console.WriteLine("No players to remove, \nSelect 0 to exit.");
+                optionSelected = Console.ReadLine();
+                if (int.TryParse(optionSelected, out selectionToInt)) // input validation so that game does not crash if user inputs something other than an integer. Otherwise switch function crashes
+                {
+                    if ((selectionToInt <= currentPlayerList.Count) && selectionToInt != 0)
+                    {
+                        currentPlayerList.Remove(currentPlayerList[selectionToInt - 1]);
+                    }
+                    else if (selectionToInt != 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Invalid number selection!!!!");
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Please select a valid number from 0 to {currentPlayerList.Count}.");
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+
+            } while (optionSelected != "0");
+
+            Console.Clear();
+            optionSelected = "";
+        }
+        public void CreateNewPlayer()
         {
             string playerName = "0"; // created default values because program was not liking empty string or char lol
             char symbol = '0';
@@ -136,6 +229,8 @@ namespace SODV1202_Connect4.Classes
             Console.ReadLine();
 
         }
+
+        
 
         private void ColorList()
         {

@@ -2,18 +2,18 @@ namespace SODV1202_Connect4.Classes
 {
 	abstract class Player
 	{
-		protected Player(string name, char c, System.ConsoleColor color)
+		protected Player(string name, char symbol, System.ConsoleColor color)
 		{
 			PlayerName = name;
-			PlayerSymbol = c;
+			PlayerSymbol = symbol;
 			PlayerColor = color;
 		}
-		public string PlayerName { get; protected set; }
+        public string PlayerName { get; protected set; } // changed all to protected
         public char PlayerSymbol { get; set; }
         public System.ConsoleColor PlayerColor { get; protected set; }
-        public int Wins { get; protected set; } = 0;
-        public int Losses { get; protected set; } = 0;
-        public bool IsAI { get; set; } = false;
+        protected int Wins { get; set; } = 0;
+        protected int Losses { get;  set; } = 0;
+        public bool IsAI { get; protected set; } = false;
 
         public void PlayerAddWin()
         {
