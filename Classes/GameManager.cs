@@ -187,7 +187,6 @@ namespace SODV1202_Connect4.Classes
                 while (choosing)
                 {
                     Console.WriteLine("Enter 0 to exit process");
-                    Console.WriteLine("Enter 0 to exit process");
                     Console.WriteLine("Select the difficulty of the AI:");
                     Console.WriteLine("1. Easy");
                     Console.WriteLine("2. Medium");
