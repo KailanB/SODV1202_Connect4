@@ -177,10 +177,12 @@ namespace SODV1202_Connect4.Classes
                     {
                         break;
                     }
+                    choosing = false;// break loop since proposed player type was NOT denied in if in.TryParse check line
                 }
                 else Console.WriteLine("Please select a valid number!"); // if int Parse fails, output fix for user
-                choosing = false;// break loop since proposed player type was NOT denied in foreach loop
+                
             }
+            if (typeOfPlayer == 0) return; // exit create new player process if user chose 0
             if (typeOfPlayer == AIPlayer) //This menu it's only showed when the type of player it's AI
             {
                 choosing = true;

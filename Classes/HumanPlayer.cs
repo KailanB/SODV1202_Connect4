@@ -11,7 +11,7 @@ namespace SODV1202_Connect4.Classes
         }
 
 
-        public string CheckStats() // IMPLEMENT THIS METHOD
+        public string CheckStats()
         {
             return $"{PlayerName} game stats:\nWins: {Wins}\nLosses: {Losses}\nTotal Games:{Wins + Losses}";
         }

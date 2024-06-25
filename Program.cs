@@ -21,7 +21,7 @@ class Program
         currentPlayerList.Add(player2);
         Player player3 = new AIPlayer("Easy Peasy", 'X', ConsoleColor.DarkRed, new AIEasy());
 
-        GameManager.PlayerList.Add(player1);
+        GameManager.PlayerList.Add(player1); // default players have been intentionally left to allow for easy testing of the game
         GameManager.PlayerList.Add(player2);
         GameManager.PlayerList.Add(player3);
 
@@ -29,7 +29,7 @@ class Program
         int selectionToInt;
         do
         {
-            Console.Clear(); // added clear, might not work well?
+            Console.Clear();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("------------- MENU -------------");
             Console.ForegroundColor = ConsoleColor.White;

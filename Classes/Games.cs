@@ -6,6 +6,7 @@
         {
             GameName = name;
             MaxPlayers = 100; // default for games that do not have a player limit within the rules
+            // min players will auto default to 0
         }
 
         protected Games(string name, int minPlayers, int maxPlayers)
